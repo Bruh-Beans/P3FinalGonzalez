@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public Camera mainCamera;
     public Camera hoodCamera;
     public KeyCode switchKey;
+    public GameObject projectilePrefab;
+    public Transform projectileSpawnPoint;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +22,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                // Launch a projectile from the player
+                Instantiate(projectilePrefab, projectileSpawnPoint.position, projectilePrefab.transform.rotation);
+            }
+
+        }
         horizontalInput = Input.GetAxis("Horizontal");
         forwardInput = Input.GetAxis("Vertical");
         // Move the vehicle forward based on verticle input
@@ -37,7 +47,6 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-
     }
 }
 

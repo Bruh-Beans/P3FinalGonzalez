@@ -11,11 +11,11 @@ public class PlayerController : MonoBehaviour
     public float turnSpeed = 45.0f;
     public float horizontalInput;
     public float forwardInput;
-    public Camera mainCamera;
     public Camera hoodCamera;
     public KeyCode switchKey;
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
+    private GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,14 +25,11 @@ public class PlayerController : MonoBehaviour
     {
         Destroy(gameObject);
         Destroy(other.gameObject);
-        if (!gameObject.CompareTag("Player"))
-        {
-
-        }
 
 
 
     }
+
 
 
     // Update is called once per frame
@@ -48,17 +45,16 @@ public class PlayerController : MonoBehaviour
 
             horizontalInput = Input.GetAxis("Horizontal");
             forwardInput = Input.GetAxis("Vertical");
-            // Move the vehicle forward based on verticle input
+            // Move the Player forward based on verticle input
             transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
-            // Rotates the car based on horizontal input
+            // Rotates the Player based on horizontal input
             transform.Rotate(Vector3.up, turnSpeed * horizontalInput * Time.deltaTime);
             if (Input.GetKeyDown(switchKey))
             {
-                mainCamera.enabled = !mainCamera.enabled;
+              
                 hoodCamera.enabled = !hoodCamera.enabled;
                 if (Input.GetKeyDown(switchKey))
                 {
-                    mainCamera.enabled = !mainCamera.enabled;
                     hoodCamera.enabled = !hoodCamera.enabled;
                 }
 

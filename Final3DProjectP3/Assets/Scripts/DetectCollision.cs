@@ -6,6 +6,8 @@ using TMPro;
 
 public class DetectCollision : MonoBehaviour
 {
+    private Rigidbody targetRb;
+    private GameManager gameManager;
     private static int score = 0;
     private static int lives = 3;
     private bool alive = true;
@@ -13,7 +15,8 @@ public class DetectCollision : MonoBehaviour
     public ParticleSystem explosionParticle;
     void Start()
     {
-
+        targetRb = GetComponent<Rigidbody>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
     void Update()
     {
@@ -31,7 +34,7 @@ public class DetectCollision : MonoBehaviour
             if (lives <= 0)
             {
                 alive = false;
-                Debug.Log("GAME OVER DESU !");
+                Debug.Log("GameOver");
                 Destroy(gameObject);
                 Destroy(other.gameObject);
             }

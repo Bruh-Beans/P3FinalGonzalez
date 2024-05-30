@@ -8,6 +8,8 @@ TagManager:
   - Bone
   - ScoreText
   - Win
+  - Obstacle
+  - HighScoreText
   layers:
   - Default
   - TransparentFX

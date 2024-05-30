@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class DetectCollision : MonoBehaviour
@@ -9,21 +8,26 @@ public class DetectCollision : MonoBehaviour
     private Rigidbody targetRb;
     private GameManager gameManager;
     private static int score = 0;
-    private static int lives = 3;
+    public static int lives = 1;
     private bool alive = true;
     private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI highScoreText;
     public ParticleSystem explosionParticle;
+    private const string HighScoreKey = "HighScore";
+
     void Start()
     {
         targetRb = GetComponent<Rigidbody>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        highScoreText = GameObject.FindWithTag("HighScoreText").GetComponent<TextMeshProUGUI>();
+        scoreText = GameObject.FindWithTag("ScoreText").GetComponent<TextMeshProUGUI>();
+        UpdateHighScoreDisplay();
     }
+
     void Update()
     {
-
     }
 
-    //Detects that it is the player and takes away one life, if more lives, GameOver.
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && alive)
@@ -33,16 +37,16 @@ public class DetectCollision : MonoBehaviour
             Debug.Log("Lives: " + lives);
             if (lives <= 0)
             {
+                gameManager.GameOver();
                 alive = false;
                 Debug.Log("GameOver");
                 Destroy(gameObject);
                 Destroy(other.gameObject);
+                CheckAndSetHighScore();
             }
         }
-        //Detects if it is a projectile, if yes, destroys both entities and gives a score of +1
         else if (other.CompareTag("Bone"))
         {
-
             Destroy(gameObject);
             score += 1;
             UpdateScore(0);
@@ -54,18 +58,35 @@ public class DetectCollision : MonoBehaviour
 
     private void UpdateScore(int scoreToAdd)
     {
+        score += scoreToAdd;
+        if (scoreText != null)
         {
-            if (scoreText == null) // Correct comparison operator
-            {
-                // Find the TextMeshProUGUI object by tag
-                scoreText = GameObject.FindWithTag("ScoreText").GetComponent<TextMeshProUGUI>();
-            }
-
-            // Add the score
-            score += scoreToAdd;
-
-            // Update the TextMeshProUGUI text
-            scoreText.text = "Score: " + score.ToString(); // Corrected concatenation and ToString() call
+            scoreText.text = "Score: " + score.ToString();
         }
+    }
+
+    private void CheckAndSetHighScore()
+    {
+        int highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        if (score > highScore)
+        {
+            PlayerPrefs.SetInt(HighScoreKey, score);
+            PlayerPrefs.Save();
+        }
+        UpdateHighScoreDisplay();
+    }
+
+    private void UpdateHighScoreDisplay()
+    {
+        int highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        if (highScoreText != null)
+        {
+            highScoreText.text = "High Score: " + highScore.ToString();
+        }
+    }
+
+    public static void ResetScore()
+    {
+        score = 0;
     }
 }

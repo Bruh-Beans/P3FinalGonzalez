@@ -9,24 +9,22 @@ public class GameManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI winOverText;
+    public TextMeshProUGUI highScoreText; // Add this reference in the inspector
     public Button restartButton;
+    public Button startButton;
     public GameObject titleScreen;
     public bool isGameActive;
     public TextMeshProUGUI livesText;
     public int lives;
 
-    // Start is called before the first frame update
     void Start()
     {
-
     }
 
-    // Update is called once per frame
     void Update()
     {
-
     }
-
 
     public void GameOver()
     {
@@ -35,24 +33,32 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
     }
 
+    public void Win()
+    {
+        startButton.gameObject.SetActive(true);
+        winOverText.gameObject.SetActive(true);
+        isGameActive = false;
+    }
 
     public void RestartGame()
     {
+        DetectCollision.ResetScore();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StartAgain()
+    {
+        DetectCollision.ResetScore();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void StartGame(int difficulty)
     {
         isGameActive = true;
-
         titleScreen.SetActive(false);
-        // Offset -1 in the UpdateLives()
         lives++;
         UpdateLives();
-        //
-
     }
-    // Count down by 1 and allowed to set lives value in the inspector
 
     public void UpdateLives()
     {

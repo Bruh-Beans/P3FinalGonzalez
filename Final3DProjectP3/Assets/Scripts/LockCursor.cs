@@ -1,23 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LockCursor : MonoBehaviour
 {
-
     void Start()
     {
-        // esc
+        // Initially unlock the cursor, assuming the game starts at the title screen
+        Unlock();
+    }
+
+    public void Lock()
+    {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Unlock()
     {
-        // esc
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 }
-    

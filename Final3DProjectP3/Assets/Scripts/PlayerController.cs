@@ -42,7 +42,6 @@ public class PlayerController : MonoBehaviour
             gameManager.Win();
             Destroy(gameObject);
             Destroy(other.gameObject);
-            lockCursor.Unlock();
             Debug.Log("Win");
         }
     }

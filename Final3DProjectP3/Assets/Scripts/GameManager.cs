@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
                 animalSpeed = 25.0f;
                 break;
             default:
-                spawnRate = 0.05f;
+                spawnRate = 0.1f;
                 animalSpeed = 30.0f;
                 break;
         }

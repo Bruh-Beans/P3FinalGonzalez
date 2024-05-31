@@ -16,7 +16,9 @@ public class GameManager : MonoBehaviour
     public Button startButton;
     public GameObject titleScreen;
     public bool isGameActive;
-    public int lives;
+    public int lives = 1;
+    bool gamePaused = false;
+    public GameObject pauseMenuUI;
 
     private LockCursor lockCursor;
 
@@ -28,13 +30,16 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        PauseMenu();
     }
 
     public void GameOver()
     {
+        isGameActive = false; // Set game active state to false
+                              // Add any additional logic to stop gameplay (e.g., stopping movement, disabling player controls)
+                              // Example: playerMovement.enabled = false;
         restartButton.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(true);
-        isGameActive = false;
         lockCursor.Unlock(); // Unlock cursor when game is over
     }
 
@@ -62,13 +67,11 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(int difficulty)
     {
-        isGameActive = true;
+        isGameActive = true; // Set game active when game starts
         titleScreen.SetActive(false);
-        lives++;
-        UpdateLives();
+        UpdateLives(); // Update UI
         SetDifficulty(difficulty); // Set difficulty when the game starts
         lockCursor.Lock(); // Lock cursor when the game starts
-
     }
 
     public void UpdateLives()
@@ -76,13 +79,17 @@ public class GameManager : MonoBehaviour
         if (isGameActive)
         {
             lives--;
+            Debug.Log("Lives: " + lives); // Add this line for debugging
             livesText.text = "Lives: " + lives;
-            if (lives == 0)
+            if (lives <= 0)
             {
-                GameOver();
+                GameOver(); // Trigger game over only when lives are depleted
             }
         }
     }
+
+
+
 
     // Set spawn rate and speed based on difficulty
     public void SetDifficulty(int difficulty)
@@ -96,22 +103,56 @@ public class GameManager : MonoBehaviour
                 animalSpeed = 5.0f;
                 break;
             case 2:
-                spawnRate = 1.5f;
-                animalSpeed = 10.0f;
-                break;
-            case 3:
-                spawnRate = 1.0f;
+                spawnRate = 1f;
                 animalSpeed = 15.0f;
                 break;
+            case 3:
+                spawnRate = 0.5f;
+                animalSpeed = 25.0f;
+                break;
             default:
-                spawnRate = 1.5f;
-                animalSpeed = 10.0f;
+                spawnRate = 0.05f;
+                animalSpeed = 30.0f;
                 break;
         }
 
         SpawnManager spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         spawnManager.SetSpawnRate(spawnRate);
         spawnManager.SetAnimalSpeed(animalSpeed);
+    }
+    public int Lives
+    {
+        get { return lives; }
+        set
+        {
+            lives = value;
+            livesText.text = "Lives: " + lives; // Update UI when lives change
+        }
+    }
+    void PauseMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (gamePaused)
+            {
+                gamePaused = false;
+                Time.timeScale = 1f;
+                pauseMenuUI.SetActive(false);
+                isGameActive = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Space) && isGameActive)
+            {
+                if (!gamePaused)
+                {
+
+                    Time.timeScale = 0f;
+                    pauseMenuUI.SetActive(true);
+                    gamePaused = true;
+                    isGameActive = false;
+                }
+
+            }
+        }
     }
 
 }

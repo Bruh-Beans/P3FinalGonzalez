@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,25 +16,26 @@ public class PlayerController : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     public float projectileSpeed = 20f;  // Speed of the projectile
+    public AudioClip fireSound;  // Reference to the audio clip for firing
+    private AudioSource audioSource;  // Reference to the AudioSource component
     private GameManager gameManager;
     private LockCursor lockCursor;
 
-    // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         lockCursor = GameObject.Find("LockCursorManager").GetComponent<LockCursor>();
+        audioSource = GetComponent<AudioSource>();  // Initialize the AudioSource component
     }
-        // Initialize the game manager or other necessary components here
-    
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Obstacle"))  //  obstacles have the tag "Obstacle"
+        if (other.CompareTag("Obstacle"))  // Obstacles have the tag "Obstacle"
         {
-            Destroy(gameObject);
+            // Decrease player's lives
+            gameManager.UpdateLives();
+            // Remove the obstacle
             Destroy(other.gameObject);
-            lockCursor.Unlock();
         }
         else if (other.CompareTag("Win"))  // Assuming win trigger has the tag "Win"
         {
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         HandleMovement();
@@ -76,6 +76,12 @@ public class PlayerController : MonoBehaviour
             if (rb != null)
             {
                 rb.velocity = projectileSpawnPoint.forward * projectileSpeed;
+            }
+
+            // Play the firing sound
+            if (fireSound != null)
+            {
+                audioSource.PlayOneShot(fireSound);
             }
         }
     }

@@ -14,6 +14,8 @@ public class DetectCollision : MonoBehaviour
     private TextMeshProUGUI highScoreText;
     public ParticleSystem explosionParticle;
     private const string HighScoreKey = "HighScore";
+    public AudioClip hitSound;  // Reference to the audio clip for hitting an obstacle
+    private AudioSource audioSource;  // Reference to the AudioSource component
 
     void Start()
     {
@@ -22,6 +24,7 @@ public class DetectCollision : MonoBehaviour
         highScoreText = GameObject.FindWithTag("HighScoreText").GetComponent<TextMeshProUGUI>();
         scoreText = GameObject.FindWithTag("ScoreText").GetComponent<TextMeshProUGUI>();
         UpdateHighScoreDisplay();
+        audioSource = GetComponent<AudioSource>();  // Initialize the AudioSource component
     }
 
     void Update()
@@ -33,20 +36,15 @@ public class DetectCollision : MonoBehaviour
         //when animal hits the player they are destroyed and do damage to the player(Takes a life)
         if (other.CompareTag("Player") && alive)
         {
-            Destroy(gameObject);
-            lives -= 1;
-            Debug.Log("Lives: " + lives);
-            if (lives <= 0)
+            gameManager.lives--; // Decrease lives count
+            Debug.Log("Lives: " + gameManager.lives);
+            if (gameManager.lives <= 0)
             {
                 gameManager.GameOver();
                 alive = false;
                 Debug.Log("GameOver");
-                Destroy(gameObject);
-                Destroy(other.gameObject);
                 CheckAndSetHighScore();
-                // Delete GameOver method
-                gameManager.UpdateLives();
-                //
+                Destroy(other.gameObject);
             }
         }
         //bone is the tag for the sword projectile. a point is scored when ever the projectile makes contact with a aniaml
@@ -58,9 +56,15 @@ public class DetectCollision : MonoBehaviour
             Debug.Log("Score: " + score);
             Destroy(other.gameObject);
             Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+            //Play hit sound
+            if (hitSound != null)
+            {
+                SoundManager.Instance.PlaySound(hitSound);
+            }
         }
     }
-    // the score updates and is added on top of eachother for a accumlated score
+
+    // the score updates and is added on top of eachother for a accumulated score
     private void UpdateScore(int scoreToAdd)
     {
         score += scoreToAdd;
@@ -69,6 +73,7 @@ public class DetectCollision : MonoBehaviour
             scoreText.text = "Score: " + score.ToString();
         }
     }
+
     // this saves the highscore no matter the time period this helps create the goal for the game
     private void CheckAndSetHighScore()
     {
@@ -80,6 +85,7 @@ public class DetectCollision : MonoBehaviour
         }
         UpdateHighScoreDisplay();
     }
+
     //This displayes the high score onto the scene through tm pro
     private void UpdateHighScoreDisplay()
     {
@@ -89,6 +95,7 @@ public class DetectCollision : MonoBehaviour
             highScoreText.text = "High Score: " + highScore.ToString();
         }
     }
+
     // the score is reset after every game over, but the highscore is unaffected unless a new highscore was set
     public static void ResetScore()
     {
